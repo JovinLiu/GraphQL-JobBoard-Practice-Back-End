@@ -1,0 +1,47 @@
+# graphQL只提供了5种预设的内置类型scalar types：# Int、String、Float、Boolean、ID
+# 我们也可以自定义类型，但如果希望自己的GraphQL API可以被其他Client使用，最好还是遵循GraphQL的规范。
+
+# 在graphQL中，null表示not available
+# 默认情况下在graphQL中，all field是nullable的，即可以返回null值。除非手动声明该field必须有值
+# 在graphQL中，!表示required，表示该字段必须有值，表示设置为non-nullable field，否则会报错。但是client不一定要获取该值。
+
+type Query {
+  # 获取所有job，返回Job类型数组，并且声明Job必须有值，不能出现null
+  jobs: [Job!]
+  # 声明获取单个job的query，声明必须要传入id，id的类型是ID，并且声明必须有值，job的类型是Job
+  job(id: ID!): Job
+  company(id: ID!): Company!
+}
+
+type Mutation {
+  createJob(input: CreateJobInput!): Job
+  updateJob(input: UpdateJobInput!): Job
+  deleteJob(id: ID!): Job
+}
+
+type Job {
+  id: ID!
+  date: String!
+  title: String!
+  company: Company!
+  description: String
+}
+
+# 我们可以将一个custom object type作为另一个custom object type的field
+type Company {
+  id: ID!
+  name: String!
+  description: String
+  jobs: [Job!]!
+}
+
+input CreateJobInput {
+  title: String!
+  description: String
+}
+
+input UpdateJobInput {
+  id: ID!
+  title: String!
+  description: String
+}
